@@ -3,8 +3,8 @@ from django.contrib.auth.models import AbstractUser
 
 
 class Collaborateur(AbstractUser):
-    nom_complet = models.CharField(max_length=255, unique=True)
-    password = models.CharField(max_length=255)
+    nom_complet = models.CharField(max_length=255, unique=True, null=False)
+    password = models.CharField(max_length=255, null=False)
     ROLE_CHOICES = [
         ('commercial', 'Commercial'),
         ('support', 'Support'),
@@ -18,14 +18,15 @@ class Collaborateur(AbstractUser):
 
 class Client(models.Model):
     nom_complet = models.CharField(max_length=255, null=False)
-    email = models.EmailField(unique=True, null= False)
-    telephone = models.IntegerField(max_length=12)
-    entreprise = models.CharField(max_length=255)
+    email = models.EmailField(unique=True, null=False)
+    telephone = models.CharField(max_length=12)
+    entreprise = models.CharField(max_length=255, default="Particulier")
     date_creation = models.DateField(null=False)
     date_derniere_maj = models.DateField(null=False)
 
     def __str__(self):
         return self.nom_complet
+
 
 class Contrat(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, null=False)
@@ -48,12 +49,12 @@ class Contrat(models.Model):
 
 
 class Evenement(models.Model):
-    contrat = models.ForeignKey(Contrat, on_delete=models.CASCADE)
-    nom = models.CharField(max_length=255)
-    date_debut = models.DateTimeField()
-    date_fin = models.DateTimeField()
-    support = models.ForeignKey(Collaborateur, on_delete=models.SET_NULL, null=True, blank=True)
-    lieu = models.CharField(max_length=255)
+    contrat = models.ForeignKey(Contrat, on_delete=models.CASCADE, null=False)
+    nom = models.CharField(max_length=255, null=False)
+    date_debut = models.DateTimeField(null=False)
+    date_fin = models.DateTimeField(null=False)
+    support = models.ForeignKey(Collaborateur, on_delete=models.PROTECT)
+    lieu = models.CharField(max_length=255, null=False)
     nombre_participants = models.IntegerField()
     notes = models.TextField()
 
