@@ -2,9 +2,10 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 
-class Collaborateur(AbstractUser):
+class User(AbstractUser):
+    USERNAME_FIELD = 'username'
     nom_complet = models.CharField(max_length=255, unique=True, null=False)
-    password = models.CharField(max_length=255, null=False)
+    username = models.CharField(max_length=150, unique=True, null=False)
     ROLE_CHOICES = [
         ('commercial', 'Commercial'),
         ('support', 'Support'),
@@ -21,8 +22,8 @@ class Client(models.Model):
     email = models.EmailField(unique=True, null=False)
     telephone = models.CharField(max_length=12)
     entreprise = models.CharField(max_length=255, default="Particulier")
-    date_creation = models.DateField(null=False)
-    date_derniere_maj = models.DateField(null=False)
+    date_creation = models.DateTimeField(auto_now_add=True)
+    date_derniere_maj = models.DateField(auto_now=True, null=False)
 
     def __str__(self):
         return self.nom_complet
@@ -30,7 +31,7 @@ class Client(models.Model):
 
 class Contrat(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, null=False)
-    commercial = models.ForeignKey(Collaborateur, on_delete=models.CASCADE, null=False)
+    commercial = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
     montant_total = models.FloatField(null=False)
     montant_restant = models.FloatField(null=False)
     date_creation = models.DateField(auto_now_add=True)
@@ -53,7 +54,7 @@ class Evenement(models.Model):
     nom = models.CharField(max_length=255, null=False)
     date_debut = models.DateTimeField(null=False)
     date_fin = models.DateTimeField(null=False)
-    support = models.ForeignKey(Collaborateur, on_delete=models.PROTECT)
+    support = models.ForeignKey(User, on_delete=models.PROTECT)
     lieu = models.CharField(max_length=255, null=False)
     nombre_participants = models.IntegerField()
     notes = models.TextField()
