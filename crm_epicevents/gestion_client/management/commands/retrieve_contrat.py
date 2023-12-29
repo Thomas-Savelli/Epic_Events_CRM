@@ -4,13 +4,30 @@ from gestion_client.models import Contrat
 
 
 class Command(BaseCommand):
-    help = 'Affiche les détails d\'un contrat en fonction de son ID ou tous les contrats'
+    help = 'Affiche les détails d\'un contrat'
 
     def add_arguments(self, parser):
         parser.add_argument('contrat_id', type=int, nargs='?', help='ID du contrat à afficher')
+        parser.add_argument('--client', type=str, help='Filtre les contrats par client (nom ou ID)', required=False)
+        parser.add_argument('--commercial', type=str, help='Filtre les contrats par commercial (nom ou ID)',
+                            required=False)
+        parser.add_argument('--montant_total', type=float, help='Filtre les contrats par montant total',
+                            required=False)
+        parser.add_argument('--montant_restant', type=float, help='Filtre les contrats par montant restant',
+                            required=False)
+        parser.add_argument('--statut', type=str, help='Filtre les contrats par statut', required=False)
+        parser.add_argument('--date_creation', type=str,
+                            help='Filtre les contrats par date de création (format : YYYY-MM-DD)',
+                            required=False)
 
-    def handle(self, *args, **kwargs):
-        contrat_id = kwargs.get('contrat_id')
+    def handle(self, *args, **options):
+        contrat_id = options['contrat_id']
+        client_filter = options['client']
+        commercial_filter = options['commercial']
+        montant_total_filter = options['montant_total']
+        montant_restant_filter = options['montant_restant']
+        statut_filter = options['statut']
+        date_creation_filter = options['date_creation']
 
         if contrat_id is not None:
             try:
@@ -20,6 +37,37 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.ERROR(f"Aucun contrat trouvé avec l'ID {contrat_id}."))
         else:
             contrats = Contrat.objects.all()
+
+            if client_filter:
+                # essai de filtrage par ID
+                try:
+                    client_id = int(client_filter)
+                    contrats = contrats.filter(client__id=client_id)
+                except ValueError:
+                    # sinon essai filtrage par nom
+                    contrats = contrats.filter(client__nom_complet__icontains=client_filter)
+
+            if commercial_filter:
+                # essai de filtrage par ID
+                try:
+                    commercial_id = int(commercial_filter)
+                    contrats = contrats.filter(commercial__id=commercial_id)
+                except ValueError:
+                    # sinon essai de filtrage par nom
+                    contrats = contrats.filter(commercial__nom_complet__icontains=commercial_filter)
+
+            if montant_total_filter:
+                contrats = contrats.filter(montant_total=montant_total_filter)
+
+            if montant_restant_filter:
+                contrats = contrats.filter(montant_restant=montant_restant_filter)
+
+            if statut_filter:
+                contrats = contrats.filter(statut__icontains=statut_filter)
+
+            if date_creation_filter:
+                contrats = contrats.filter(date_creation__icontains=date_creation_filter)
+
             if contrats.exists():
                 self.print_contrat_details(contrats)
             else:

@@ -8,9 +8,17 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('collaborateur_id', nargs='?', type=int, help='ID du collaborateur à récupérer')
+        parser.add_argument('--nom_complet', type=str, help='Filtre les collaborateurs par nom complet',
+                            required=False)
+        parser.add_argument('--username', type=str, help='Filtre les collaborateurs par nom d\'utilisateur',
+                            required=False)
+        parser.add_argument('--role', type=str, help='Filtre les collaborateurs par rôle', required=False)
 
     def handle(self, *args, **options):
         collaborateur_id = options['collaborateur_id']
+        nom_complet_filter = options['nom_complet']
+        username_filter = options['username']
+        role_filter = options['role']
 
         if collaborateur_id is not None:
             try:
@@ -20,6 +28,16 @@ class Command(BaseCommand):
                 raise CommandError(f"Collaborateur avec l'ID {collaborateur_id} non trouvé.")
         else:
             collaborateurs = User.objects.all()
+
+            if nom_complet_filter:
+                collaborateurs = collaborateurs.filter(nom_complet__icontains=nom_complet_filter)
+
+            if username_filter:
+                collaborateurs = collaborateurs.filter(username__icontains=username_filter)
+
+            if role_filter:
+                collaborateurs = collaborateurs.filter(role__icontains=role_filter)
+
             if collaborateurs:
                 self.print_collaborateurs_details(collaborateurs)
             else:

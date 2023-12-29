@@ -8,9 +8,17 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('client_id', nargs='?', type=int, help='ID du client à récupérer')
+        parser.add_argument('--nom_complet', type=str, help='Filtre les clients par nom complet', required=False)
+        parser.add_argument('--email', type=str, help='Filtre les clients par adresse e-mail', required=False)
+        parser.add_argument('--telephone', type=str, help='Filtre les clients par numéro de téléphone', required=False)
+        parser.add_argument('--entreprise', type=str, help='Filtre les clients par nom d\'entreprise', required=False)
 
     def handle(self, *args, **options):
         client_id = options['client_id']
+        nom_complet_filter = options['nom_complet']
+        email_filter = options['email']
+        telephone_filter = options['telephone']
+        entreprise_filter = options['entreprise']
 
         if client_id is not None:
             try:
@@ -20,6 +28,19 @@ class Command(BaseCommand):
                 raise CommandError(f"Client avec l'ID {client_id} non trouvé.")
         else:
             clients = Client.objects.all()
+
+            if nom_complet_filter:
+                clients = clients.filter(nom_complet__icontains=nom_complet_filter)
+
+            if email_filter:
+                clients = clients.filter(email__icontains=email_filter)
+
+            if telephone_filter:
+                clients = clients.filter(telephone__icontains=telephone_filter)
+
+            if entreprise_filter:
+                clients = clients.filter(entreprise__icontains=entreprise_filter)
+
             if clients:
                 self.print_clients_details(clients)
             else:
