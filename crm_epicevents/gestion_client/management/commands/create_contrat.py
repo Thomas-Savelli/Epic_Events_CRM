@@ -25,7 +25,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.ERROR(f"Le statut '{statut}' est invalide. Choisissez parmi les options suivantes: {', '.join(valid_statuts)}"))
             return
 
-        # Vérifier si les IDs de client et commercial existent
+        # Vérifie si les IDs de client et commercial existent
         try:
             client = Client.objects.get(pk=client_id)
         except Client.DoesNotExist:
@@ -38,7 +38,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.ERROR(f"Aucun commercial trouvé avec l'ID {commercial_id}."))
             return
 
-        # Vérifier si le rôle du collaborateur est commercial
+        # Vérifie si le rôle du collaborateur est commercial
         if commercial.role.lower() != 'commercial':
             self.stdout.write(self.style.ERROR(f"Le collaborateur avec l'ID {commercial_id} n'a pas le rôle 'commercial'."))
             return

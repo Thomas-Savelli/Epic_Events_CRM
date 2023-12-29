@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
+from tabulate import tabulate
 from gestion_client.models import User
 
 
@@ -14,22 +15,27 @@ class Command(BaseCommand):
         if collaborateur_id is not None:
             try:
                 collaborateur = User.objects.get(id=collaborateur_id)
-                self.stdout.write(self.style.SUCCESS("Informations du collaborateur :"))
-                self.stdout.write(f"ID: {collaborateur.id}")
-                self.stdout.write(f"Nom complet: {collaborateur.nom_complet}")
-                self.stdout.write(f"Nom d'utilisateur: {collaborateur.username}")
-                self.stdout.write(f"Rôle: {collaborateur.role}")
+                self.print_collaborateurs_details([collaborateur])
             except User.DoesNotExist:
                 raise CommandError(f"Collaborateur avec l'ID {collaborateur_id} non trouvé.")
         else:
             collaborateurs = User.objects.all()
-
             if collaborateurs:
-                print("")
-                print("Liste des collaborateurs:")
-                print("")
-                for collaborateur in collaborateurs:
-                    print(f"- {collaborateur.id} | {collaborateur.nom_complet} | ({collaborateur.username}) | Rôle: {collaborateur.role}")
-                    print("---------------------------------------------------------------------")
+                self.print_collaborateurs_details(collaborateurs)
             else:
-                print("Aucun collaborateur trouvé.")
+                self.stdout.write(self.style.SUCCESS("Aucun collaborateur trouvé."))
+
+    def print_collaborateurs_details(self, data):
+        headers = ["ID", "Nom Complet", "Nom d'Utilisateur", "Rôle"]
+        rows = []
+
+        for item in data:
+            row = [item.id, item.nom_complet, item.username, item.get_role_display()]
+            rows.append(row)
+
+        title = "Listes des Collaborateurs"
+        table = tabulate(rows, headers=headers, tablefmt="pretty")
+
+        # Utilisation d'une chaîne de format traditionnelle
+        table_with_title = "{}\n{}".format(title.center(len(table.split('\n')[0])), table)
+        print(table_with_title)

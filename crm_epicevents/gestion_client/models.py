@@ -52,8 +52,8 @@ class Contrat(models.Model):
 class Evenement(models.Model):
     contrat = models.ForeignKey(Contrat, on_delete=models.CASCADE, null=False)
     nom = models.CharField(max_length=255, null=False)
-    date_debut = models.DateTimeField(null=False)
-    date_fin = models.DateTimeField(null=False)
+    date_debut = models.DateField(null=False)
+    date_fin = models.DateField(null=False)
     support = models.ForeignKey(User, on_delete=models.PROTECT)
     lieu = models.CharField(max_length=255, null=False)
     nombre_participants = models.IntegerField()

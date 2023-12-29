@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
+from tabulate import tabulate
 from gestion_client.models import Client
 
 
@@ -14,26 +15,31 @@ class Command(BaseCommand):
         if client_id is not None:
             try:
                 client = Client.objects.get(id=client_id)
-                formatted_date_creation = client.date_creation.strftime('%Y-%m-%d')
-                formatted_date_derniere_maj = client.date_derniere_maj.strftime('%Y-%m-%d')
-                self.stdout.write(self.style.SUCCESS("Informations du client :"))
-                self.stdout.write(f"ID: {client.id}")
-                self.stdout.write(f"Nom complet: {client.nom_complet}")
-                self.stdout.write(f"Email: {client.email}")
-                self.stdout.write(f"Telephone: {client.telephone}")
-                self.stdout.write(f"Entreprise: {client.entreprise}")
-                self.stdout.write(f"Création fiche: {formatted_date_creation}")
-                self.stdout.write(f"Date dernier contact: {formatted_date_derniere_maj}")
+                self.print_clients_details([client])
             except Client.DoesNotExist:
                 raise CommandError(f"Client avec l'ID {client_id} non trouvé.")
         else:
             clients = Client.objects.all()
             if clients:
-                print("")
-                print("Liste des clients:")
-                print("")
-                for client in clients:
-                    print(f"- {client.id} | {client.nom_complet} | {client.email} | {client.telephone} | {client.entreprise}")
-                    print("---------------------------------------------------------------------")
+                self.print_clients_details(clients)
             else:
-                print("Aucun client trouvé.")
+                self.stdout.write(self.style.SUCCESS("Aucun client trouvé."))
+
+    def print_clients_details(self, data):
+        headers = ["ID", "Nom Complet", "Email", "Téléphone", "Entreprise", "Date de Création", "Dernière Mise à Jour"]
+        rows = []
+
+        for item in data:
+            formatted_date_creation = item.date_creation.strftime('%Y-%m-%d')
+            formatted_date_derniere_maj = item.date_derniere_maj.strftime('%Y-%m-%d')
+            row = [item.id, item.nom_complet, item.email,
+                   item.telephone, item.entreprise,
+                   formatted_date_creation, formatted_date_derniere_maj]
+            rows.append(row)
+
+        title = "Listes des Clients"
+        table = tabulate(rows, headers=headers, tablefmt="pretty")
+
+        # Utilisation d'une chaîne de format traditionnelle
+        table_with_title = "{}\n{}".format(title.center(len(table.split('\n')[0])), table)
+        print(table_with_title)
