@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from tabulate import tabulate
 from gestion_client.models import Contrat
+from gestion_client.permissions import require_login
 
 
 class Command(BaseCommand):
@@ -20,6 +21,7 @@ class Command(BaseCommand):
                             help='Filtre les contrats par date de création (format : YYYY-MM-DD)',
                             required=False)
 
+    @require_login
     def handle(self, *args, **options):
         contrat_id = options['contrat_id']
         client_filter = options['client']

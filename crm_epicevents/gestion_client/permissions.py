@@ -1,38 +1,22 @@
-from functools import wraps
-from django.contrib.auth import authenticate
+from gestion_client.auth_utils import validate_token, load_token
+from django.core.management.base import CommandError
+# from functools import wraps
+# from gestion_client.models import User
+# from django.core.exceptions import PermissionDenied
 
 
-def authenticate_user(request):
-    print("Bienvenue dans l'application ! Veuillez vous connecter.")
-    username = input("Nom d'utilisateur : ")
-    password = input("Mot de passe : ")
-    user = authenticate(request, username=username, password=password)
+def require_login(command_func):
+    def wrapper(*args, **kwargs):
+        token = load_token()
 
-    if user is None:
-        print("L'authentification a échoué. Veuillez réessayer.")
-        return None
+        if not token:
+            raise CommandError("L'utilisateur n'est pas connecté. Veuillez vous connecter.")
 
-    return user
+        user = validate_token(token)
 
+        if user is None:
+            raise CommandError("Token invalide. Veuillez vous connecter.")
 
-def gestion_collaborateur_required(func):
-    @wraps(func)
-    def wrapper(request, *args, **kwargs):
-        collaborateur = request.user
-
-        # Si l'utilisateur n'est pas authentifié, demandez l'authentification
-        if not collaborateur.is_authenticated:
-            collaborateur = authenticate_user(request)
-
-            # Si l'authentification échoue, interrompez l'exécution de la fonction
-            if collaborateur is None:
-                return None
-
-        # Vérifiez le rôle du collaborateur avant de permettre l'action
-        if collaborateur.role == 'gestion':
-            return func(request, *args, **kwargs)
-        else:
-            print("Vous n'avez pas l'autorisation d'effectuer cette action.")
-            return None  # Ou retournez une valeur appropriée selon votre logique
+        return command_func(*args, **kwargs)
 
     return wrapper

@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from gestion_client.models import Client
 from django.utils import timezone
+from gestion_client.permissions import require_login
 
 
 class Command(BaseCommand):
@@ -14,6 +15,7 @@ class Command(BaseCommand):
         parser.add_argument('--date_derniere_maj', type=str,
                             help='Date de dernière mise à jour (format YYYY-MM-DD HH:MM:SS)', required=False)
 
+    @require_login
     def handle(self, *args, **kwargs):
         nom_complet = kwargs['nom_complet']
         email = kwargs['email']

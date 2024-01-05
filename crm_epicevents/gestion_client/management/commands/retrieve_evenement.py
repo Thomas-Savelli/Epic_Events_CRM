@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from gestion_client.models import Evenement
 from tabulate import tabulate
+from gestion_client.permissions import require_login
 
 
 class Command(BaseCommand):
@@ -20,6 +21,7 @@ class Command(BaseCommand):
         parser.add_argument('--participants', type=str, help='Filtre les événements par nombre de participants (ex: -50, +50, +100, +200)',
                             required=False)
 
+    @require_login
     def handle(self, *args, **options):
         evenement_id = options['evenement_id']
         contrat_filter = options['contrat']

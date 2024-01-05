@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from tabulate import tabulate
 from gestion_client.models import Client
+from gestion_client.permissions import require_login
 
 
 class Command(BaseCommand):
@@ -13,6 +14,7 @@ class Command(BaseCommand):
         parser.add_argument('--telephone', type=str, help='Filtre les clients par numéro de téléphone', required=False)
         parser.add_argument('--entreprise', type=str, help='Filtre les clients par nom d\'entreprise', required=False)
 
+    @require_login
     def handle(self, *args, **options):
         client_id = options['client_id']
         nom_complet_filter = options['nom_complet']

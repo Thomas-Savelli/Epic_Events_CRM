@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from gestion_client.models import Evenement, Contrat, User
 from datetime import datetime
+from gestion_client.permissions import require_login
 
 
 class Command(BaseCommand):
@@ -16,6 +17,7 @@ class Command(BaseCommand):
         parser.add_argument('nombre_participants', type=int, help='Nombre de participants')
         parser.add_argument('notes', type=str, help='Notes sur l\'événement')
 
+    @require_login
     def handle(self, *args, **options):
         contrat_id = options['contrat_id']
         nom = options['nom']

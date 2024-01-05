@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
 from gestion_client.models import User
+from gestion_client.permissions import require_login
 
 
 class Command(BaseCommand):
@@ -8,6 +9,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('user_id', type=int, help='ID du collaborateur à supprimer')
 
+    @require_login
     def handle(self, *args, **kwargs):
         user_id = kwargs['user_id']
 

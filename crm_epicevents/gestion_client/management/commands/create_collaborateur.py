@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
 from gestion_client.models import User
+from gestion_client.permissions import require_login
 
 
 class Command(BaseCommand):
@@ -11,6 +12,7 @@ class Command(BaseCommand):
         parser.add_argument('username', help='Nom d\'utilisateur')
         parser.add_argument('password', help='Mot de passe')
 
+    @require_login
     def handle(self, *args, **options):
         nom_complet = options['nom_complet']
         role = options['role']

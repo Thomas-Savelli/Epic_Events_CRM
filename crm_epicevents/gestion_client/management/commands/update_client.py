@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
 from gestion_client.models import Client
+from gestion_client.permissions import require_login
 
 
 class Command(BaseCommand):
@@ -12,6 +13,7 @@ class Command(BaseCommand):
         parser.add_argument('--telephone', type=str, help='Nouveau numéro de téléphone du client', required=False)
         parser.add_argument('--entreprise', type=str, help='Nouvelle entreprise du client', required=False)
 
+    @require_login
     def handle(self, *args, **kwargs):
         client_id = kwargs['client_id']
 

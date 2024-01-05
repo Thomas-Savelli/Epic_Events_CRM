@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from gestion_client.models import Evenement, User
 from datetime import datetime
+from gestion_client.permissions import require_login
 
 
 class Command(BaseCommand):
@@ -16,6 +17,7 @@ class Command(BaseCommand):
         parser.add_argument('--notes', type=str, help='Nouvelles notes', required=False)
         parser.add_argument('--support_id', type=int, help='ID du nouveau Collaborateur support', required=False)
 
+    @require_login
     def handle(self, *args, **options):
         evenement_id = options['evenement_id']
         nom = options['nom']

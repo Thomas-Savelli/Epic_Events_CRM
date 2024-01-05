@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from tabulate import tabulate
 from gestion_client.models import User
+from gestion_client.permissions import require_login
 
 
 class Command(BaseCommand):
@@ -14,6 +15,7 @@ class Command(BaseCommand):
                             required=False)
         parser.add_argument('--role', type=str, help='Filtre les collaborateurs par rôle', required=False)
 
+    @require_login
     def handle(self, *args, **options):
         collaborateur_id = options['collaborateur_id']
         nom_complet_filter = options['nom_complet']
@@ -56,4 +58,4 @@ class Command(BaseCommand):
 
         # Utilisation d'une chaîne de format traditionnelle
         table_with_title = "{}\n{}".format(title.center(len(table.split('\n')[0])), table)
-        print(table_with_title)
+        self.stdout.write(table_with_title)
