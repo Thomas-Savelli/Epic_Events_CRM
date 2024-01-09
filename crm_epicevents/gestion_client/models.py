@@ -24,6 +24,7 @@ class Client(models.Model):
     entreprise = models.CharField(max_length=255, default="Particulier")
     date_creation = models.DateTimeField(auto_now_add=True)
     date_derniere_maj = models.DateField(auto_now=True, null=False)
+    commercial = models.ForeignKey(User, on_delete=models.CASCADE, related_name='clients', null=True)
 
     def __str__(self):
         return self.nom_complet

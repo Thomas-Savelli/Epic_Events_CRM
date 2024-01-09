@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from gestion_client.models import Client
-from gestion_client.permissions import require_login
+from gestion_client.permissions import require_login, require_team_commercial_and_client_access
 
 
 class Command(BaseCommand):
@@ -10,6 +10,7 @@ class Command(BaseCommand):
         parser.add_argument('client_id', type=int, help='ID du client à supprimer')
 
     @require_login
+    @require_team_commercial_and_client_access
     def handle(self, *args, **kwargs):
         client_id = kwargs['client_id']
 

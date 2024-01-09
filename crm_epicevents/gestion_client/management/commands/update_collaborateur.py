@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from gestion_client.models import User
-from gestion_client.permissions import require_login
+from gestion_client.permissions import require_login, require_team_gestion
 
 
 class Command(BaseCommand):
@@ -14,6 +14,7 @@ class Command(BaseCommand):
         parser.add_argument('--password', type=str, help='Nouveau mot de passe du collaborateur')
 
     @require_login
+    @require_team_gestion
     def handle(self, *args, **kwargs):
         user_id = kwargs['user_id']
         nom_complet = kwargs['nom_complet']

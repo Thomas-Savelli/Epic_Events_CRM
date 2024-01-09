@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from gestion_client.models import Contrat, User
-from gestion_client.permissions import require_login
+from gestion_client.permissions import require_login, require_commercial_contrat_access_or_team_gestion
 
 
 class Command(BaseCommand):
@@ -14,6 +14,7 @@ class Command(BaseCommand):
         parser.add_argument('--commercial_id', type=int, help='ID du nouveau Commercial', required=False)
 
     @require_login
+    @require_commercial_contrat_access_or_team_gestion
     def handle(self, *args, **options):
         contrat_id = options['contrat_id']
         montant_total = options['montant_total']

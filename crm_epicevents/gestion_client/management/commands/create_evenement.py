@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from gestion_client.models import Evenement, Contrat, User
 from datetime import datetime
-from gestion_client.permissions import require_login
+from gestion_client.permissions import require_login, require_commercial_event_access
 
 
 class Command(BaseCommand):
@@ -18,6 +18,7 @@ class Command(BaseCommand):
         parser.add_argument('notes', type=str, help='Notes sur l\'événement')
 
     @require_login
+    @require_commercial_event_access
     def handle(self, *args, **options):
         contrat_id = options['contrat_id']
         nom = options['nom']

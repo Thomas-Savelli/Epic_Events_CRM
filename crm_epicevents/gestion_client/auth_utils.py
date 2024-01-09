@@ -24,8 +24,13 @@ def generate_token(user, expiration_time):
 
     # Enregistrement du token dans le fichier
     with open(TOKEN_FILE_PATH, 'w') as token_file:
-        json.dump({'token': token, 'expiration_time': expiration_time.timestamp()}, token_file)
-
+        token_file.write(json.dumps({
+                    'token': token,
+                    'expiration_time': expiration_time.timestamp(),
+                    'user_id': user.id,
+                    'user_role': user.role,
+                    'user_name': user.nom_complet,
+                }))
     return token
 
 

@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from gestion_client.models import Contrat, User, Client
-from gestion_client.permissions import require_login
+from gestion_client.permissions import require_login, require_team_gestion
 
 
 class Command(BaseCommand):
@@ -14,6 +14,7 @@ class Command(BaseCommand):
         parser.add_argument('statut', type=str, help='Statut du contrat')
 
     @require_login
+    @require_team_gestion
     def handle(self, *args, **kwargs):
         client_id = kwargs['client_id']
         commercial_id = kwargs['commercial_id']

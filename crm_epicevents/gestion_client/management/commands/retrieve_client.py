@@ -49,14 +49,15 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.SUCCESS("Aucun client trouvé."))
 
     def print_clients_details(self, data):
-        headers = ["ID", "Nom Complet", "Email", "Téléphone", "Entreprise", "Date de Création", "Dernière Mise à Jour"]
+        headers = ["ID", "Nom Complet", "Email", "Téléphone", "Entreprise", "commercial", "Date de Création",
+                   "Dernière Mise à Jour"]
         rows = []
 
         for item in data:
             formatted_date_creation = item.date_creation.strftime('%Y-%m-%d')
             formatted_date_derniere_maj = item.date_derniere_maj.strftime('%Y-%m-%d')
             row = [item.id, item.nom_complet, item.email,
-                   item.telephone, item.entreprise,
+                   item.telephone, item.entreprise, item.commercial,
                    formatted_date_creation, formatted_date_derniere_maj]
             rows.append(row)
 
