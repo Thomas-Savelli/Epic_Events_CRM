@@ -20,6 +20,6 @@ class Command(BaseCommand):
             expiration_time = datetime.utcnow() + timedelta(hours=2)
             token = generate_token(user, expiration_time)
 
-            self.stdout.write(self.style.SUCCESS(f'Connexion réussie! Token généré : {token}'))
+            self.stdout.write(self.style.SUCCESS(f'Connexion réussie! Bonjour : {user.nom_complet}'))
         else:
             self.stdout.write(self.style.ERROR('Échec de l\'authentification'))
