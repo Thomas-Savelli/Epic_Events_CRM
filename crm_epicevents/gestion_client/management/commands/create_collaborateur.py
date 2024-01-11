@@ -1,5 +1,4 @@
 from django.core.management.base import BaseCommand
-from django.contrib.auth.hashers import make_password
 import getpass
 from gestion_client.models import User
 from gestion_client.permissions import require_login, require_team_gestion

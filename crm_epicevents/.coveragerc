@@ -1,0 +1,2 @@
+[run]
+omit = gestion_client\tests\*
