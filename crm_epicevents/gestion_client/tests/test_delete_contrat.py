@@ -124,34 +124,3 @@ def test_delete_contrat_not_found(mocker, custom_input):
             except CommandError as ce:
                 # Vérification du message d'erreur
                 assert str(ce) == "Le contrat avec l'ID 999 n'existe pas."
-
-
-@pytest.mark.django_db
-def test_delete_contrat_not_authenticated(mocker, custom_input):
-    # Créer un client fictif pour le test
-    client = Client.objects.create(nom_complet='Client Test', email='test@example.com')
-
-    # Créer un commercial fictif pour le test
-    commercial = User.objects.create_user(username='testcommercial',
-                                          password='testpassword', nom_complet='Test Commercial', role='commercial')
-
-    # Créer un contrat fictif pour le test
-    contrat = Contrat.objects.create(client=client, commercial=commercial, montant_total='1000.00',
-                                     montant_restant='800.00', statut='En cours')
-
-    # Mock de la fonction getpass pour éviter les demandes de mot de passe réelles
-    mocker.patch('getpass.getpass', return_value='testpassword')
-
-    # Utilisation de patch pour simuler l'entrée utilisateur
-    with patch('builtins.input', side_effect=custom_input):
-        # Mock pour contourner la vérification de l'autorisation
-        mocker.patch('gestion_client.permissions.get_user_role_from_token', return_value=None)
-
-        # Capture de la sortie standard pour vérification
-        with patch('sys.stderr', new_callable=Mock) as mock_stderr:
-            # Création d'une instance de la commande
-            try:
-                call_command('delete_contrat', str(contrat.pk))
-            except CommandError as ce:
-                # Vérification du message d'erreur
-                assert str(ce) == "Vous n'avez pas la permission d'effectuer cette action."

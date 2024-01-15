@@ -11,7 +11,7 @@ class Command(BaseCommand):
         parser.add_argument('commercial_id', type=int, help='ID du commercial associé au contrat')
         parser.add_argument('montant_total', type=float, help='Montant total du contrat')
         parser.add_argument('montant_restant', type=float, help='Montant restant à payer du contrat')
-        parser.add_argument('statut', type=str, help='Statut du contrat')
+        parser.add_argument('statut', type=str, help='Statut du contrat (attente signature, signé, en cours, terminé, résilié, annulé)')
 
     @require_login
     @require_team_gestion

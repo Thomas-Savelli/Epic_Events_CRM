@@ -1,2 +1,5 @@
 [run]
-omit = gestion_client\tests\*
+omit =
+        *__init__*
+        */gestion_client/migrations/*
+        */gestion_client/tests/*

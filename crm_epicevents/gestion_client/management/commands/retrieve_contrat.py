@@ -16,7 +16,7 @@ class Command(BaseCommand):
                             required=False)
         parser.add_argument('--montant_restant', type=float, help='Filtre les contrats par montant restant',
                             required=False)
-        parser.add_argument('--statut', type=str, help='Filtre les contrats par statut', required=False)
+        parser.add_argument('--statut', type=str, help='Filtre les contrats par statut (attente signature, signé, en cours, terminé, résilié, annulé)', required=False)
         parser.add_argument('--date_creation', type=str,
                             help='Filtre les contrats par date de création (format : YYYY-MM-DD)',
                             required=False)
